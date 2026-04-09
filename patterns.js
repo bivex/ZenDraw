@@ -928,7 +928,7 @@ export class PatternGenerator {
     draw3DBoxes() {
         this.setupStroke(true);
         const { count } = this.getSettings();
-        const boxes = Math.min(count, 10);
+        const boxes = Math.min(Math.ceil(count / 4), 3);
         const margin = 100;
 
         for (let i = 0; i < boxes; i++) {
