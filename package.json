@@ -1,0 +1,17 @@
+{
+  "name": "learning-drawing",
+  "version": "1.0.0",
+  "description": "Linear pattern generator for drawing practice",
+  "main": "script.js",
+  "scripts": {
+    "start": "npx serve .",
+    "dev": "npx serve ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "serve": "^14.2.1"
+  }
+}
