@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZenDraw | Pure Drawing Practice</title>
-    <meta name="description" content="A minimalist workspace for building muscle memory through linear pattern exercises.">
+    <title>ZenDraw | Professional Drawing Academy</title>
+    <meta name="description" content="A comprehensive workstation for building foundational drawing skills and muscle memory.">
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,12 +15,12 @@
         <aside class="sidebar">
             <header>
                 <h1>ZenDraw</h1>
-                <p class="subtitle">Linear Exercises</p>
+                <p class="subtitle">Drawing Fundamentals</p>
             </header>
 
             <nav class="controls">
                 <div class="control-group">
-                    <label>Intensity</label>
+                    <label>Sheet Intensity</label>
                     <select id="difficulty">
                         <option value="easy">Low (Sparse)</option>
                         <option value="medium" selected>Normal</option>
@@ -28,76 +28,64 @@
                     </select>
                 </div>
 
-                <div class="control-group">
+                <div class="exercises-container">
                     <div class="label-row">
-                        <label>Exercise Type</label>
+                        <label>Choose Exercises</label>
                         <div class="small-actions">
                             <span id="select-all">Select All</span>
                             <span id="deselect-all">Clear</span>
                         </div>
                     </div>
-                    <div class="checkbox-list">
-                        <label class="checkbox-item">
-                            <input type="checkbox" id="type-straight" checked>
-                            <span>Ghosted Lines (Accuracy)</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" id="type-wavy" checked>
-                            <span>S-Curves & Flow</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" id="type-zigzag" checked>
-                            <span>Precision Zigzags</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" id="type-spiral">
-                            <span>Confidence Ovals</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" id="type-intersect">
-                            <span>Tonal Hatching</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" id="type-ornament">
-                            <span>Rhythmic Meanders</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" id="type-planes">
-                            <span>Perspective Planes</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" id="type-contours">
-                            <span>Surface Contours</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" id="type-chains">
-                            <span>Accuracy Chains</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" id="type-pressure">
-                            <span>Pressure Tapers</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" id="type-funnel">
-                            <span>Perspective Funnels</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" id="type-ribbon">
-                            <span>Flowing Ribbons</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" id="type-gradient">
-                            <span>Density Gradients</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" id="type-forms">
-                            <span>Form Intersections</span>
-                        </label>
+
+                    <!-- Category: Lines & Accuracy -->
+                    <div class="category">
+                        <h3>Lines & Accuracy</h3>
+                        <div class="checkbox-list">
+                            <label class="checkbox-item"><input type="checkbox" id="type-straight" checked><span>Ghosted Lines</span></label>
+                            <label class="checkbox-item"><input type="checkbox" id="type-zigzag"><span>Precision Zigzags</span></label>
+                            <label class="checkbox-item"><input type="checkbox" id="type-chains"><span>Accuracy Chains</span></label>
+                        </div>
+                    </div>
+
+                    <!-- Category: Flow & Rhythm -->
+                    <div class="category">
+                        <h3>Flow & Rhythm</h3>
+                        <div class="checkbox-list">
+                            <label class="checkbox-item"><input type="checkbox" id="type-wavy" checked><span>S-Curves & Flow</span></label>
+                            <label class="checkbox-item"><input type="checkbox" id="type-ornament"><span>Rhythmic Meanders</span></label>
+                            <label class="checkbox-item"><input type="checkbox" id="type-ribbon"><span>Flowing Ribbons</span></label>
+                        </div>
+                    </div>
+
+                    <!-- Category: Form & Perspective -->
+                    <div class="category">
+                        <h3>Form & Perspective</h3>
+                        <div class="checkbox-list">
+                            <label class="checkbox-item"><input type="checkbox" id="type-spiral"><span>Confidence Ovals</span></label>
+                            <label class="checkbox-item"><input type="checkbox" id="type-planes"><span>Perspective Planes</span></label>
+                            <label class="checkbox-item"><input type="checkbox" id="type-contours"><span>Surface Contours</span></label>
+                            <label class="checkbox-item"><input type="checkbox" id="type-funnel"><span>Perspective Funnels</span></label>
+                            <label class="checkbox-item"><input type="checkbox" id="type-forms"><span>Form Intersections</span></label>
+                            <label class="checkbox-item"><input type="checkbox" id="type-organic"><span>Organic Forms</span></label>
+                            <label class="checkbox-item"><input type="checkbox" id="type-shadows"><span>Cast Shadows</span></label>
+                        </div>
+                    </div>
+
+                    <!-- Category: Tone & Texture -->
+                    <div class="category">
+                        <h3>Tone & Texture</h3>
+                        <div class="checkbox-list">
+                            <label class="checkbox-item"><input type="checkbox" id="type-intersect"><span>Tonal Hatching</span></label>
+                            <label class="checkbox-item"><input type="checkbox" id="type-pressure"><span>Pressure Tapers</span></label>
+                            <label class="checkbox-item"><input type="checkbox" id="type-gradient"><span>Density Gradients</span></label>
+                            <label class="checkbox-item"><input type="checkbox" id="type-textures"><span>Texture Patches</span></label>
+                            <label class="checkbox-item"><input type="checkbox" id="type-negative"><span>Negative Space</span></label>
+                        </div>
                     </div>
                 </div>
 
                 <div class="control-group">
-                    <label>Zoom View</label>
+                    <label>View Management</label>
                     <div class="zoom-controls">
                         <button id="zoom-out" title="Zoom Out">-</button>
                         <span id="zoom-level">100%</span>
@@ -107,6 +95,7 @@
                 </div>
 
                 <div class="button-group">
+                    <button id="random-btn" class="tertiary-btn">Random Exercise</button>
                     <button id="generate-btn" class="primary-btn">New Exercise</button>
                     <button id="clear-btn" class="secondary-btn">Rest Sheet</button>
                 </div>

@@ -9,65 +9,48 @@ document.addEventListener('DOMContentLoaded', () => {
     const clearBtn = document.getElementById('clear-btn');
     const difficultySelect = document.getElementById('difficulty');
     const downloadBtn = document.getElementById('download-btn');
-
-    // Checkboxes
-    const types = {
-        straight: document.getElementById('type-straight'),
-        wavy: document.getElementById('type-wavy'),
-        zigzag: document.getElementById('type-zigzag'),
-        spiral: document.getElementById('type-spiral'),
-        intersect: document.getElementById('type-intersect'),
-        ornament: document.getElementById('type-ornament'),
-        planes: document.getElementById('type-planes'),
-        contours: document.getElementById('type-contours'),
-        chains: document.getElementById('type-chains'),
-        pressure: document.getElementById('type-pressure'),
-        funnel: document.getElementById('type-funnel'),
-        ribbon: document.getElementById('type-ribbon'),
-        gradient: document.getElementById('type-gradient'),
-        forms: document.getElementById('type-forms')
-    };
-
     const selectAllBtn = document.getElementById('select-all');
     const deselectAllBtn = document.getElementById('deselect-all');
-
-    selectAllBtn.addEventListener('click', () => {
-        Object.values(types).forEach(cb => cb.checked = true);
-        generatePattern();
-    });
-
-    deselectAllBtn.addEventListener('click', () => {
-        Object.values(types).forEach(cb => cb.checked = false);
-        generatePattern();
-    });
-
-    // Zoom Controls
     const zoomInBtn = document.getElementById('zoom-in');
     const zoomOutBtn = document.getElementById('zoom-out');
     const zoomResetBtn = document.getElementById('zoom-reset');
     const zoomLevelDisplay = document.getElementById('zoom-level');
     const canvasWrapper = document.querySelector('.canvas-wrapper');
 
+    // Exercise Type Checkboxes - Grouped by category for logic but mapped as single object
+    const types = {
+        // Lines & Accuracy
+        straight: document.getElementById('type-straight'),
+        zigzag: document.getElementById('type-zigzag'),
+        chains: document.getElementById('type-chains'),
+        // Flow & Rhythm
+        wavy: document.getElementById('type-wavy'),
+        ornament: document.getElementById('type-ornament'),
+        ribbon: document.getElementById('type-ribbon'),
+        // Form & Perspective
+        spiral: document.getElementById('type-spiral'),
+        planes: document.getElementById('type-planes'),
+        contours: document.getElementById('type-contours'),
+        funnel: document.getElementById('type-funnel'),
+        forms: document.getElementById('type-forms'),
+        organic: document.getElementById('type-organic'),
+        shadows: document.getElementById('type-shadows'),
+        // Tone & Texture
+        intersect: document.getElementById('type-intersect'),
+        pressure: document.getElementById('type-pressure'),
+        gradient: document.getElementById('type-gradient'),
+        textures: document.getElementById('type-textures'),
+        negative: document.getElementById('type-negative')
+    };
+
+    // Zoom State
     let currentZoom = 1;
 
     function updateZoom(newZoom) {
-        currentZoom = Math.min(Math.max(0.5, newZoom), 3); // Limit 50% to 300%
+        currentZoom = Math.min(Math.max(0.5, newZoom), 3);
         canvasWrapper.style.transform = `scale(${currentZoom})`;
         zoomLevelDisplay.textContent = `${Math.round(currentZoom * 100)}%`;
     }
-
-    zoomInBtn.addEventListener('click', () => updateZoom(currentZoom + 0.1));
-    zoomOutBtn.addEventListener('click', () => updateZoom(currentZoom - 0.1));
-    zoomResetBtn.addEventListener('click', () => updateZoom(1));
-
-    // Optional: Mouse wheel zoom
-    window.addEventListener('wheel', (e) => {
-        if (e.ctrlKey || e.metaKey) {
-            e.preventDefault();
-            const delta = e.deltaY > 0 ? -0.1 : 0.1;
-            updateZoom(currentZoom + delta);
-        }
-    }, { passive: false });
 
     // Initialize Canvas Size
     function initCanvas() {
@@ -81,24 +64,48 @@ document.addEventListener('DOMContentLoaded', () => {
         generator.setDifficulty(difficultySelect.value);
 
         if (types.straight.checked) generator.drawStraightLines();
-        if (types.wavy.checked) generator.drawWavyLines();
         if (types.zigzag.checked) generator.drawZigzags();
-        if (types.spiral.checked) generator.drawSpirals();
-        if (types.intersect.checked) generator.drawIntersectingLines();
+        if (types.chains.checked) generator.drawChains();
+        
+        if (types.wavy.checked) generator.drawWavyLines();
         if (types.ornament.checked) generator.drawOrnaments();
+        if (types.ribbon.checked) generator.drawRibbon();
+        
+        if (types.spiral.checked) generator.drawSpirals();
         if (types.planes.checked) generator.drawPlanes();
         if (types.contours.checked) generator.drawContours();
-        if (types.chains.checked) generator.drawChains();
-        if (types.pressure.checked) generator.drawPressure();
         if (types.funnel.checked) generator.drawFunnels();
-        if (types.ribbon.checked) generator.drawRibbon();
-        if (types.gradient.checked) generator.drawGradient();
         if (types.forms.checked) generator.drawForms();
+        if (types.organic.checked) generator.drawOrganic();
+        if (types.shadows.checked) generator.drawShadows();
+        
+        if (types.intersect.checked) generator.drawIntersectingLines();
+        if (types.pressure.checked) generator.drawPressure();
+        if (types.gradient.checked) generator.drawGradient();
+        if (types.textures.checked) generator.drawTextures();
+        if (types.negative.checked) generator.drawNegative();
     }
 
     // Event Listeners
+    const randomBtn = document.getElementById('random-btn');
+
+    randomBtn.addEventListener('click', () => {
+        // Deselect all
+        Object.values(types).forEach(cb => { if(cb) cb.checked = false; });
+        
+        // Pick 1-3 random keys
+        const keys = Object.keys(types);
+        const count = 1 + Math.floor(Math.random() * 2); // 1 or 2 (keep it simple as requested)
+        
+        for (let i = 0; i < count; i++) {
+            const randomKey = keys[Math.floor(Math.random() * keys.length)];
+            types[randomKey].checked = true;
+        }
+
+        generatePattern();
+    });
+
     generateBtn.addEventListener('click', () => {
-        // Add a small animation effect to the canvas on click
         canvas.style.opacity = '0';
         setTimeout(() => {
             generatePattern();
@@ -110,13 +117,27 @@ document.addEventListener('DOMContentLoaded', () => {
         generator.clear();
     });
 
+    selectAllBtn.addEventListener('click', () => {
+        Object.values(types).forEach(cb => { if(cb) cb.checked = true; });
+        generatePattern();
+    });
+
+    deselectAllBtn.addEventListener('click', () => {
+        Object.values(types).forEach(cb => { if(cb) cb.checked = false; });
+        generatePattern();
+    });
+
     difficultySelect.addEventListener('change', () => {
         generatePattern();
     });
 
+    zoomInBtn.addEventListener('click', () => updateZoom(currentZoom + 0.1));
+    zoomOutBtn.addEventListener('click', () => updateZoom(currentZoom - 0.1));
+    zoomResetBtn.addEventListener('click', () => updateZoom(1));
+
     downloadBtn.addEventListener('click', () => {
         const link = document.createElement('a');
-        link.download = `zendraw-pattern-${Date.now()}.png`;
+        link.download = `zendraw-exercise-${Date.now()}.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
     });
@@ -130,9 +151,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 250);
     });
 
+    window.addEventListener('wheel', (e) => {
+        if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            const delta = e.deltaY > 0 ? -0.1 : 0.1;
+            updateZoom(currentZoom + delta);
+        }
+    }, { passive: false });
+
     // Initial load
     initCanvas();
-    
-    // Add CSS transition for opacity
     canvas.style.transition = 'opacity 0.2s ease-in-out';
 });

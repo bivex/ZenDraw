@@ -78,6 +78,35 @@ header h1 {
     gap: 1rem;
 }
 
+.exercises-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+/* Custom scrollbar for sidebar */
+.exercises-container::-webkit-scrollbar {
+    width: 4px;
+}
+.exercises-container::-webkit-scrollbar-thumb {
+    background: #e0e0e0;
+    border-radius: 4px;
+}
+
+.category h3 {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.6rem;
+    padding-bottom: 0.3rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
 label {
     font-size: 0.7rem;
     font-weight: 600;
@@ -90,6 +119,7 @@ label {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 0.5rem;
 }
 
 .small-actions {
@@ -174,6 +204,16 @@ button {
 
 .primary-btn:hover {
     background: var(--accent-hover);
+}
+
+.tertiary-btn {
+    background: #f0f0f0;
+    color: var(--text-primary);
+    border: 1px solid #ddd;
+}
+
+.tertiary-btn:hover {
+    background: #e5e5e5;
 }
 
 .secondary-btn {
