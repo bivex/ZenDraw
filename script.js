@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
         forms: document.getElementById('type-forms'),
         organic: document.getElementById('type-organic'),
         shadows: document.getElementById('type-shadows'),
+        boxes: document.getElementById('type-boxes'),
         // Tone & Texture
         intersect: document.getElementById('type-intersect'),
         pressure: document.getElementById('type-pressure'),
@@ -85,6 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (types.forms.checked) generator.drawForms();
         if (types.organic.checked) generator.drawOrganic();
         if (types.shadows.checked) generator.drawShadows();
+        if (types.boxes.checked) generator.draw3DBoxes();
         
         if (types.intersect.checked) generator.drawIntersectingLines();
         if (types.pressure.checked) generator.drawPressure();

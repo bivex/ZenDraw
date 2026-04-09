@@ -920,4 +920,81 @@ export class PatternGenerator {
             this.drawPoint(cx, cy + s * 1.5);      // Sacrum
         }
     }
+
+    /**
+     * Exercise 25: 3D Boxes
+     * Draws 3D box wireframes from various angles with perspective guides.
+     */
+    draw3DBoxes() {
+        this.setupStroke(true);
+        const { count } = this.getSettings();
+        const boxes = Math.min(count, 10);
+        const margin = 100;
+
+        for (let i = 0; i < boxes; i++) {
+            const cx = margin + Math.random() * (this.width - margin * 2);
+            const cy = margin + Math.random() * (this.height - margin * 2);
+            const size = 40 + Math.random() * 50;
+
+            // Random rotation angles for the 3 offset directions
+            const dx1 = (Math.random() - 0.5) * size * 1.2;
+            const dy1 = -(20 + Math.random() * size * 0.6);
+            const dx2 = (Math.random() - 0.5) * size * 1.2;
+            const dy2 = (Math.random() - 0.5) * size * 0.5;
+
+            // Front face corners
+            const f0 = { x: cx, y: cy };
+            const f1 = { x: cx + size, y: cy };
+            const f2 = { x: cx + size, y: cy + size };
+            const f3 = { x: cx, y: cy + size };
+
+            // Back face corners (offset)
+            const b0 = { x: cx + dx1, y: cy + dy1 };
+            const b1 = { x: cx + size + dx1, y: cy + dy1 };
+            const b2 = { x: cx + size + dx1, y: cy + size + dy1 };
+            const b3 = { x: cx + dx1, y: cy + size + dy1 };
+
+            // Front face
+            this.ctx.beginPath();
+            this.ctx.moveTo(f0.x, f0.y);
+            this.ctx.lineTo(f1.x, f1.y);
+            this.ctx.lineTo(f2.x, f2.y);
+            this.ctx.lineTo(f3.x, f3.y);
+            this.ctx.closePath();
+            this.ctx.stroke();
+
+            // Back face
+            this.ctx.beginPath();
+            this.ctx.moveTo(b0.x, b0.y);
+            this.ctx.lineTo(b1.x, b1.y);
+            this.ctx.lineTo(b2.x, b2.y);
+            this.ctx.lineTo(b3.x, b3.y);
+            this.ctx.closePath();
+            this.ctx.stroke();
+
+            // Connecting edges (front to back)
+            this.ctx.beginPath();
+            this.ctx.moveTo(f0.x, f0.y); this.ctx.lineTo(b0.x, b0.y);
+            this.ctx.moveTo(f1.x, f1.y); this.ctx.lineTo(b1.x, b1.y);
+            this.ctx.moveTo(f2.x, f2.y); this.ctx.lineTo(b2.x, b2.y);
+            this.ctx.moveTo(f3.x, f3.y); this.ctx.lineTo(b3.x, b3.y);
+            this.ctx.stroke();
+
+            // Diagonal construction lines (dashed) to show inner structure
+            this.ctx.beginPath();
+            this.ctx.setLineDash([2, 4]);
+            // Front face diagonals
+            this.ctx.moveTo(f0.x, f0.y); this.ctx.lineTo(f2.x, f2.y);
+            this.ctx.moveTo(f1.x, f1.y); this.ctx.lineTo(f3.x, f3.y);
+            // Back face diagonals
+            this.ctx.moveTo(b0.x, b0.y); this.ctx.lineTo(b2.x, b2.y);
+            this.ctx.moveTo(b1.x, b1.y); this.ctx.lineTo(b3.x, b3.y);
+            this.ctx.stroke();
+            this.ctx.setLineDash([]);
+
+            // Corner points
+            [f0, f1, f2, f3].forEach(p => this.drawPoint(p.x, p.y));
+            [b0, b1, b2, b3].forEach(p => this.drawPoint(p.x, p.y));
+        }
+    }
 }
