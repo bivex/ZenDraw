@@ -460,9 +460,464 @@ export class PatternGenerator {
             this.drawPoint(x, y);
         }
         this.ctx.stroke();
-        
+
         // Highlight some 'negative' pockets
         this.ctx.fillStyle = 'rgba(0,0,0,0.03)';
         this.ctx.fill();
+    }
+
+    // ─── Biology & Anatomy ─────────────────────────────────────
+
+    /**
+     * Exercise 19: Facial Proportions
+     * Draws face ovals with proportional guide lines for feature placement.
+     */
+    drawFaceProportions() {
+        this.setupStroke(true);
+        const { count } = this.getSettings();
+        const faces = Math.min(count, 6);
+        const margin = 80;
+
+        for (let i = 0; i < faces; i++) {
+            const cx = margin + Math.random() * (this.width - margin * 2);
+            const cy = margin + Math.random() * (this.height - margin * 2);
+            const faceW = 50 + Math.random() * 30;
+            const faceH = faceW * 1.3;
+
+            // Face oval
+            this.ctx.beginPath();
+            this.ctx.ellipse(cx, cy, faceW, faceH, 0, 0, Math.PI * 2);
+            this.ctx.stroke();
+
+            // Vertical center line
+            this.ctx.beginPath();
+            this.ctx.setLineDash([3, 5]);
+            this.ctx.moveTo(cx, cy - faceH);
+            this.ctx.lineTo(cx, cy + faceH);
+            this.ctx.stroke();
+
+            // Eye line (at half height)
+            const eyeY = cy - faceH * 0.05;
+            this.ctx.beginPath();
+            this.ctx.moveTo(cx - faceW * 0.9, eyeY);
+            this.ctx.lineTo(cx + faceW * 0.9, eyeY);
+            this.ctx.stroke();
+
+            // Eye corners
+            this.drawPoint(cx - faceW * 0.35, eyeY);
+            this.drawPoint(cx + faceW * 0.35, eyeY);
+            this.drawPoint(cx - faceW * 0.65, eyeY);
+            this.drawPoint(cx + faceW * 0.65, eyeY);
+
+            // Nose line (at bottom third)
+            const noseY = cy + faceH * 0.25;
+            this.ctx.beginPath();
+            this.ctx.moveTo(cx - faceW * 0.4, noseY);
+            this.ctx.lineTo(cx + faceW * 0.4, noseY);
+            this.ctx.stroke();
+            this.drawPoint(cx, noseY);
+
+            // Mouth line (at bottom quarter)
+            const mouthY = cy + faceH * 0.5;
+            this.ctx.beginPath();
+            this.ctx.moveTo(cx - faceW * 0.3, mouthY);
+            this.ctx.lineTo(cx + faceW * 0.3, mouthY);
+            this.ctx.stroke();
+
+            // Brow line
+            const browY = cy - faceH * 0.3;
+            this.ctx.beginPath();
+            this.ctx.moveTo(cx - faceW * 0.7, browY);
+            this.ctx.lineTo(cx + faceW * 0.7, browY);
+            this.ctx.stroke();
+
+            this.ctx.setLineDash([]);
+        }
+    }
+
+    /**
+     * Exercise 20: Eye Anatomy
+     * Draws eye shape guides with iris, pupil, and eyelid curves.
+     */
+    drawEyeAnatomy() {
+        this.setupStroke(true);
+        const { count } = this.getSettings();
+        const eyes = Math.min(count, 8);
+        const margin = 80;
+
+        for (let i = 0; i < eyes; i++) {
+            const cx = margin + Math.random() * (this.width - margin * 2);
+            const cy = margin + Math.random() * (this.height - margin * 2);
+            const eyeW = 40 + Math.random() * 25;
+            const eyeH = eyeW * 0.4;
+
+            // Eye almond shape (upper lid)
+            this.ctx.beginPath();
+            this.ctx.moveTo(cx - eyeW, cy);
+            this.ctx.quadraticCurveTo(cx, cy - eyeH * 2, cx + eyeW, cy);
+            this.ctx.stroke();
+
+            // Lower lid
+            this.ctx.beginPath();
+            this.ctx.moveTo(cx - eyeW, cy);
+            this.ctx.quadraticCurveTo(cx, cy + eyeH, cx + eyeW, cy);
+            this.ctx.stroke();
+
+            // Iris
+            this.ctx.beginPath();
+            this.ctx.arc(cx, cy, eyeW * 0.35, 0, Math.PI * 2);
+            this.ctx.stroke();
+
+            // Pupil
+            this.ctx.beginPath();
+            this.ctx.arc(cx, cy, eyeW * 0.15, 0, Math.PI * 2);
+            this.ctx.stroke();
+
+            // Highlight point
+            this.drawPoint(cx + eyeW * 0.1, cy - eyeW * 0.08);
+
+            // Upper eyelid crease
+            this.ctx.beginPath();
+            this.ctx.setLineDash([2, 4]);
+            this.ctx.moveTo(cx - eyeW * 0.9, cy - eyeH * 1.5);
+            this.ctx.quadraticCurveTo(cx, cy - eyeH * 3, cx + eyeW * 0.9, cy - eyeH * 1.5);
+            this.ctx.stroke();
+
+            // Inner corner detail
+            this.drawPoint(cx - eyeW, cy);
+            // Outer corner detail
+            this.drawPoint(cx + eyeW, cy);
+
+            this.ctx.setLineDash([]);
+        }
+    }
+
+    /**
+     * Exercise 21: Hand Framework
+     * Draws simplified hand construction with palm box and finger joint guides.
+     */
+    drawHandFramework() {
+        this.setupStroke(true);
+        const { count } = this.getSettings();
+        const hands = Math.min(Math.ceil(count / 4), 4);
+        const margin = 100;
+
+        for (let i = 0; i < hands; i++) {
+            const ox = margin + Math.random() * (this.width - margin * 2.5);
+            const oy = margin + Math.random() * (this.height - margin * 2.5);
+            const scale = 0.6 + Math.random() * 0.4;
+
+            // Palm box
+            const pw = 70 * scale;
+            const ph = 80 * scale;
+            this.ctx.strokeRect(ox, oy, pw, ph);
+
+            // Palm center
+            this.drawPoint(ox + pw / 2, oy + ph / 2);
+
+            // Wrist
+            this.ctx.beginPath();
+            this.ctx.moveTo(ox + pw * 0.1, oy + ph);
+            this.ctx.lineTo(ox + pw * 0.1, oy + ph + 30 * scale);
+            this.ctx.moveTo(ox + pw * 0.9, oy + ph);
+            this.ctx.lineTo(ox + pw * 0.9, oy + ph + 30 * scale);
+            this.ctx.stroke();
+
+            // Thumb
+            const thumbBase = { x: ox, y: oy + ph * 0.3 };
+            const thumbMid = { x: ox - 25 * scale, y: oy - 10 * scale };
+            const thumbTip = { x: ox - 35 * scale, y: oy - 40 * scale };
+            this.ctx.beginPath();
+            this.ctx.moveTo(thumbBase.x, thumbBase.y);
+            this.ctx.lineTo(thumbMid.x, thumbMid.y);
+            this.ctx.lineTo(thumbTip.x, thumbTip.y);
+            this.ctx.stroke();
+            this.drawPoint(thumbBase.x, thumbBase.y);
+            this.drawPoint(thumbMid.x, thumbMid.y);
+            this.drawPoint(thumbTip.x, thumbTip.y);
+
+            // Four fingers
+            const fingerWidth = pw / 4;
+            const fingerLengths = [55, 70, 65, 50].map(l => l * scale);
+
+            for (let f = 0; f < 4; f++) {
+                const baseX = ox + fingerWidth * f + fingerWidth * 0.5;
+                const baseY = oy;
+                const midX = baseX + (Math.random() - 0.5) * 5;
+                const midY = baseY - fingerLengths[f] * 0.5;
+                const tipX = baseX + (Math.random() - 0.5) * 8;
+                const tipY = baseY - fingerLengths[f];
+
+                this.ctx.beginPath();
+                this.ctx.moveTo(baseX, baseY);
+                this.ctx.lineTo(midX, midY);
+                this.ctx.lineTo(tipX, tipY);
+                this.ctx.stroke();
+
+                this.drawPoint(baseX, baseY);
+                this.drawPoint(midX, midY);
+                this.drawPoint(tipX, tipY);
+
+                // Knuckle circles
+                this.ctx.beginPath();
+                this.ctx.arc(baseX, baseY, 4 * scale, 0, Math.PI * 2);
+                this.ctx.stroke();
+            }
+        }
+    }
+
+    /**
+     * Exercise 22: Figure Proportions
+     * Draws proportioned figure guides with head-count measurement lines.
+     */
+    drawFigureProportions() {
+        this.setupStroke(true);
+        const { count } = this.getSettings();
+        const figures = Math.min(Math.ceil(count / 6), 3);
+        const margin = 80;
+
+        for (let i = 0; i < figures; i++) {
+            const headSize = 30 + Math.random() * 15;
+            const totalHeight = headSize * 8;
+            const cx = margin + 60 + Math.random() * (this.width - margin * 2 - 120);
+
+            // Scale to fit canvas
+            const scale = Math.min(1, (this.height - margin * 2) / totalHeight);
+            const sh = headSize * scale;
+            const figH = sh * 8;
+            const startY = margin + Math.random() * (this.height - margin * 2 - figH);
+
+            // Head oval
+            const headY = startY + sh;
+            this.ctx.beginPath();
+            this.ctx.ellipse(cx, startY + sh * 0.5, sh * 0.4, sh * 0.5, 0, 0, Math.PI * 2);
+            this.ctx.stroke();
+
+            // Head count guide lines (dashed)
+            this.ctx.setLineDash([2, 4]);
+            for (let h = 0; h <= 8; h++) {
+                const ly = startY + h * sh;
+                this.ctx.beginPath();
+                this.ctx.moveTo(cx - 60, ly);
+                this.ctx.lineTo(cx + 60, ly);
+                this.ctx.stroke();
+            }
+            this.ctx.setLineDash([]);
+
+            // Chin (1 head)
+            const chin = startY + sh;
+            // Shoulders (1.5 heads)
+            const shoulderY = startY + sh * 1.5;
+            const shoulderW = sh * 1.2;
+            this.drawPoint(cx - shoulderW, shoulderY);
+            this.drawPoint(cx + shoulderW, shoulderY);
+
+            // Shoulder line
+            this.ctx.beginPath();
+            this.ctx.moveTo(cx - shoulderW, shoulderY);
+            this.ctx.lineTo(cx + shoulderW, shoulderY);
+            this.ctx.stroke();
+
+            // Nipple line (2 heads)
+            const chestY = startY + sh * 2;
+            this.ctx.beginPath();
+            this.ctx.setLineDash([3, 5]);
+            this.ctx.moveTo(cx - shoulderW * 0.6, chestY);
+            this.ctx.lineTo(cx + shoulderW * 0.6, chestY);
+            this.ctx.stroke();
+
+            // Navel (3 heads)
+            const navelY = startY + sh * 3;
+            this.drawPoint(cx, navelY);
+
+            // Crotch (4 heads)
+            const crotchY = startY + sh * 4;
+            this.drawPoint(cx, crotchY);
+            this.ctx.beginPath();
+            this.ctx.moveTo(cx - shoulderW * 0.4, crotchY);
+            this.ctx.lineTo(cx + shoulderW * 0.4, crotchY);
+            this.ctx.stroke();
+
+            // Knee (6 heads)
+            const kneeY = startY + sh * 6;
+            this.drawPoint(cx - shoulderW * 0.3, kneeY);
+            this.drawPoint(cx + shoulderW * 0.3, kneeY);
+
+            // Foot (8 heads)
+            const footY = startY + sh * 8;
+
+            // Spine/center line
+            this.ctx.beginPath();
+            this.ctx.setLineDash([4, 6]);
+            this.ctx.moveTo(cx, chin);
+            this.ctx.lineTo(cx, crotchY);
+            this.ctx.stroke();
+            this.ctx.setLineDash([]);
+
+            // Arm guides
+            const elbowY = startY + sh * 3;
+            const wristY = startY + sh * 4.2;
+            // Left arm
+            this.ctx.beginPath();
+            this.ctx.moveTo(cx - shoulderW, shoulderY);
+            this.ctx.lineTo(cx - shoulderW * 0.8, elbowY);
+            this.ctx.lineTo(cx - shoulderW * 0.5, wristY);
+            this.ctx.stroke();
+            // Right arm
+            this.ctx.beginPath();
+            this.ctx.moveTo(cx + shoulderW, shoulderY);
+            this.ctx.lineTo(cx + shoulderW * 0.8, elbowY);
+            this.ctx.lineTo(cx + shoulderW * 0.5, wristY);
+            this.ctx.stroke();
+
+            // Leg guides
+            // Left leg
+            this.ctx.beginPath();
+            this.ctx.moveTo(cx - shoulderW * 0.25, crotchY);
+            this.ctx.lineTo(cx - shoulderW * 0.3, kneeY);
+            this.ctx.lineTo(cx - shoulderW * 0.25, footY);
+            this.ctx.stroke();
+            // Right leg
+            this.ctx.beginPath();
+            this.ctx.moveTo(cx + shoulderW * 0.25, crotchY);
+            this.ctx.lineTo(cx + shoulderW * 0.3, kneeY);
+            this.ctx.lineTo(cx + shoulderW * 0.25, footY);
+            this.ctx.stroke();
+        }
+    }
+
+    /**
+     * Exercise 23: Skull Construction
+     * Draws simplified skull outlines with cranial vault and facial bone guides.
+     */
+    drawSkullConstruction() {
+        this.setupStroke(true);
+        const { count } = this.getSettings();
+        const skulls = Math.min(count, 4);
+        const margin = 100;
+
+        for (let i = 0; i < skulls; i++) {
+            const cx = margin + Math.random() * (this.width - margin * 2);
+            const cy = margin + Math.random() * (this.height - margin * 2);
+            const s = 35 + Math.random() * 20;
+
+            // Cranium (large oval)
+            this.ctx.beginPath();
+            this.ctx.ellipse(cx, cy - s * 0.3, s * 0.8, s, 0, 0, Math.PI * 2);
+            this.ctx.stroke();
+
+            // Jaw (U-shape)
+            this.ctx.beginPath();
+            this.ctx.moveTo(cx - s * 0.55, cy + s * 0.2);
+            this.ctx.quadraticCurveTo(cx - s * 0.55, cy + s * 1.1, cx, cy + s * 1.2);
+            this.ctx.quadraticCurveTo(cx + s * 0.55, cy + s * 1.1, cx + s * 0.55, cy + s * 0.2);
+            this.ctx.stroke();
+
+            // Eye sockets
+            const eyeY = cy + s * 0.15;
+            this.ctx.beginPath();
+            this.ctx.ellipse(cx - s * 0.28, eyeY, s * 0.2, s * 0.15, 0, 0, Math.PI * 2);
+            this.ctx.stroke();
+            this.ctx.beginPath();
+            this.ctx.ellipse(cx + s * 0.28, eyeY, s * 0.2, s * 0.15, 0, 0, Math.PI * 2);
+            this.ctx.stroke();
+
+            // Nasal cavity
+            this.ctx.beginPath();
+            this.ctx.moveTo(cx - s * 0.12, cy + s * 0.35);
+            this.ctx.quadraticCurveTo(cx, cy + s * 0.6, cx + s * 0.12, cy + s * 0.35);
+            this.ctx.stroke();
+
+            // Zygomatic arches (cheekbones)
+            this.ctx.beginPath();
+            this.ctx.setLineDash([2, 3]);
+            this.ctx.moveTo(cx - s * 0.8, cy + s * 0.1);
+            this.ctx.lineTo(cx - s * 0.55, cy + s * 0.35);
+            this.ctx.stroke();
+            this.ctx.beginPath();
+            this.ctx.moveTo(cx + s * 0.8, cy + s * 0.1);
+            this.ctx.lineTo(cx + s * 0.55, cy + s * 0.35);
+            this.ctx.stroke();
+            this.ctx.setLineDash([]);
+
+            // Key landmark points
+            this.drawPoint(cx, cy - s);          // Crown
+            this.drawPoint(cx - s * 0.28, eyeY); // Left eye center
+            this.drawPoint(cx + s * 0.28, eyeY); // Right eye center
+            this.drawPoint(cx, cy + s * 0.48);   // Nose base
+            this.drawPoint(cx, cy + s * 1.2);    // Chin
+        }
+    }
+
+    /**
+     * Exercise 24: Torso Structure
+     * Draws simplified ribcage and pelvis forms with spinal connection.
+     */
+    drawTorsoStructure() {
+        this.setupStroke(true);
+        const { count } = this.getSettings();
+        const torsos = Math.min(Math.ceil(count / 6), 3);
+        const margin = 80;
+
+        for (let i = 0; i < torsos; i++) {
+            const cx = margin + Math.random() * (this.width - margin * 2);
+            const cy = margin + Math.random() * (this.height - margin * 2);
+            const s = 30 + Math.random() * 15;
+
+            // Spine
+            this.ctx.beginPath();
+            this.ctx.setLineDash([3, 5]);
+            this.ctx.moveTo(cx, cy - s * 3);
+            this.ctx.quadraticCurveTo(cx + s * 0.3, cy - s, cx, cy + s * 0.5);
+            this.ctx.quadraticCurveTo(cx - s * 0.2, cy + s * 1.5, cx, cy + s * 2.5);
+            this.ctx.stroke();
+            this.ctx.setLineDash([]);
+
+            // Ribcage (egg shape)
+            this.ctx.beginPath();
+            this.ctx.ellipse(cx, cy - s * 1.2, s * 1.2, s * 1.8, 0, 0, Math.PI * 2);
+            this.ctx.stroke();
+
+            // Rib lines
+            for (let r = 0; r < 4; r++) {
+                const ribY = cy - s * 2 + r * s * 0.7;
+                const ribW = s * (0.6 + r * 0.2);
+                this.ctx.beginPath();
+                this.ctx.setLineDash([2, 3]);
+                this.ctx.moveTo(cx - ribW, ribY);
+                this.ctx.quadraticCurveTo(cx, ribY + s * 0.2, cx + ribW, ribY);
+                this.ctx.stroke();
+                this.ctx.setLineDash([]);
+            }
+
+            // Pelvis (butterfly shape)
+            this.ctx.beginPath();
+            this.ctx.moveTo(cx - s * 1.3, cy + s * 0.8);
+            this.ctx.quadraticCurveTo(cx - s * 0.5, cy + s * 1.2, cx, cy + s * 1.5);
+            this.ctx.quadraticCurveTo(cx + s * 0.5, cy + s * 1.2, cx + s * 1.3, cy + s * 0.8);
+            this.ctx.stroke();
+
+            // Pelvis bottom
+            this.ctx.beginPath();
+            this.ctx.moveTo(cx - s * 1.3, cy + s * 0.8);
+            this.ctx.quadraticCurveTo(cx - s * 1.2, cy + s * 2, cx - s * 0.3, cy + s * 2.3);
+            this.ctx.stroke();
+            this.ctx.beginPath();
+            this.ctx.moveTo(cx + s * 1.3, cy + s * 0.8);
+            this.ctx.quadraticCurveTo(cx + s * 1.2, cy + s * 2, cx + s * 0.3, cy + s * 2.3);
+            this.ctx.stroke();
+
+            // Shoulder line
+            this.ctx.beginPath();
+            this.ctx.moveTo(cx - s * 1.6, cy - s * 2.2);
+            this.ctx.lineTo(cx + s * 1.6, cy - s * 2.2);
+            this.ctx.stroke();
+
+            // Key points
+            this.drawPoint(cx, cy - s * 3);       // C7/top
+            this.drawPoint(cx - s * 1.6, cy - s * 2.2); // Left shoulder
+            this.drawPoint(cx + s * 1.6, cy - s * 2.2); // Right shoulder
+            this.drawPoint(cx, cy + s * 1.5);      // Sacrum
+        }
     }
 }

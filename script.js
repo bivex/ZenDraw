@@ -40,7 +40,14 @@ document.addEventListener('DOMContentLoaded', () => {
         pressure: document.getElementById('type-pressure'),
         gradient: document.getElementById('type-gradient'),
         textures: document.getElementById('type-textures'),
-        negative: document.getElementById('type-negative')
+        negative: document.getElementById('type-negative'),
+        // Biology & Anatomy
+        face: document.getElementById('type-face'),
+        eye: document.getElementById('type-eye'),
+        hand: document.getElementById('type-hand'),
+        figure: document.getElementById('type-figure'),
+        skull: document.getElementById('type-skull'),
+        torso: document.getElementById('type-torso')
     };
 
     // Zoom State
@@ -84,6 +91,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (types.gradient.checked) generator.drawGradient();
         if (types.textures.checked) generator.drawTextures();
         if (types.negative.checked) generator.drawNegative();
+
+        if (types.face.checked) generator.drawFaceProportions();
+        if (types.eye.checked) generator.drawEyeAnatomy();
+        if (types.hand.checked) generator.drawHandFramework();
+        if (types.figure.checked) generator.drawFigureProportions();
+        if (types.skull.checked) generator.drawSkullConstruction();
+        if (types.torso.checked) generator.drawTorsoStructure();
     }
 
     // Event Listeners
