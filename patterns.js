@@ -997,4 +997,533 @@ export class PatternGenerator {
             [b0, b1, b2, b3].forEach(p => this.drawPoint(p.x, p.y));
         }
     }
+
+    // ─── Plants & Nature (Lesson 3) ────────────────────────────
+
+    /**
+     * Exercise 26: Stem Flow
+     * Draws curved stem paths with branching guides and leaf attachment points.
+     */
+    drawStemFlow() {
+        this.setupStroke(true);
+        const { count } = this.getSettings();
+        const stems = Math.min(Math.ceil(count / 4), 3);
+        const margin = 60;
+
+        for (let i = 0; i < stems; i++) {
+            const startX = margin + Math.random() * (this.width - margin * 2);
+            const startY = this.height - margin;
+            const stemHeight = 200 + Math.random() * (this.height - margin * 2 - 200);
+            const sway = 40 + Math.random() * 60;
+
+            // Main stem bezier
+            const cp1x = startX + (Math.random() - 0.5) * sway * 2;
+            const cp1y = startY - stemHeight * 0.33;
+            const cp2x = startX + (Math.random() - 0.5) * sway * 2;
+            const cp2y = startY - stemHeight * 0.66;
+            const endX = startX + (Math.random() - 0.5) * sway * 3;
+            const endY = startY - stemHeight;
+
+            this.ctx.beginPath();
+            this.ctx.moveTo(startX, startY);
+            this.ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, endX, endY);
+            this.ctx.stroke();
+
+            this.drawPoint(startX, startY);
+            this.drawPoint(endX, endY);
+
+            // Branch points along the stem
+            const branches = 2 + Math.floor(Math.random() * 3);
+            for (let b = 0; b < branches; b++) {
+                const t = 0.3 + (b / branches) * 0.6;
+                // Approximate point on bezier
+                const mt = 1 - t;
+                const bx = mt*mt*mt*startX + 3*mt*mt*t*cp1x + 3*mt*t*t*cp2x + t*t*t*endX;
+                const by = mt*mt*mt*startY + 3*mt*mt*t*cp1y + 3*mt*t*t*cp2y + t*t*t*endY;
+
+                this.drawPoint(bx, by);
+
+                // Branch direction (alternating sides)
+                const side = (b % 2 === 0) ? 1 : -1;
+                const branchLen = 30 + Math.random() * 40;
+                const branchAngle = side * (0.3 + Math.random() * 0.5);
+                const bex = bx + Math.cos(-Math.PI/2 + branchAngle) * branchLen * side;
+                const bey = by - Math.sin(Math.PI/2 + branchAngle) * branchLen;
+
+                this.ctx.beginPath();
+                this.ctx.setLineDash([3, 5]);
+                this.ctx.moveTo(bx, by);
+                this.ctx.lineTo(bex, bey);
+                this.ctx.stroke();
+                this.ctx.setLineDash([]);
+
+                // Small leaf shape at branch tip
+                const leafW = 12 + Math.random() * 10;
+                this.ctx.beginPath();
+                this.ctx.moveTo(bex, bey);
+                this.ctx.quadraticCurveTo(bex + leafW * side, bey - leafW * 0.7, bex + leafW * 0.3 * side, bey - leafW * 1.2);
+                this.ctx.quadraticCurveTo(bex - leafW * 0.2 * side, bey - leafW * 0.5, bex, bey);
+                this.ctx.stroke();
+            }
+        }
+    }
+
+    /**
+     * Exercise 27: Leaf Construction
+     * Draws leaf outlines with center vein and contour guides.
+     */
+    drawLeafConstruction() {
+        this.setupStroke(true);
+        const { count } = this.getSettings();
+        const leaves = Math.min(count, 6);
+        const margin = 80;
+
+        for (let i = 0; i < leaves; i++) {
+            const cx = margin + Math.random() * (this.width - margin * 2);
+            const cy = margin + Math.random() * (this.height - margin * 2);
+            const leafLen = 60 + Math.random() * 50;
+            const leafW = leafLen * (0.3 + Math.random() * 0.2);
+            const angle = (Math.random() - 0.5) * Math.PI * 0.6;
+
+            this.ctx.save();
+            this.ctx.translate(cx, cy);
+            this.ctx.rotate(angle);
+
+            // Leaf outline (two bezier curves)
+            this.ctx.beginPath();
+            this.ctx.moveTo(0, -leafLen / 2);
+            this.ctx.quadraticCurveTo(leafW, 0, 0, leafLen / 2);
+            this.ctx.quadraticCurveTo(-leafW, 0, 0, -leafLen / 2);
+            this.ctx.stroke();
+
+            // Center vein
+            this.ctx.beginPath();
+            this.ctx.moveTo(0, -leafLen / 2);
+            this.ctx.lineTo(0, leafLen / 2);
+            this.ctx.stroke();
+
+            // Side veins
+            const veins = 3 + Math.floor(Math.random() * 3);
+            for (let v = 1; v <= veins; v++) {
+                const vy = -leafLen / 2 + (leafLen / (veins + 1)) * v;
+                const vw = leafW * 0.6 * (1 - Math.abs(vy) / (leafLen / 2));
+                this.ctx.beginPath();
+                this.ctx.setLineDash([2, 3]);
+                this.ctx.moveTo(0, vy);
+                this.ctx.lineTo(vw, vy - 5);
+                this.ctx.stroke();
+                this.ctx.beginPath();
+                this.ctx.moveTo(0, vy);
+                this.ctx.lineTo(-vw, vy - 5);
+                this.ctx.stroke();
+                this.ctx.setLineDash([]);
+            }
+
+            // Stem point and tip point
+            this.drawPoint(0, -leafLen / 2);
+            this.drawPoint(0, leafLen / 2);
+
+            this.ctx.restore();
+        }
+    }
+
+    /**
+     * Exercise 28: Flower Petals
+     * Draws flower centers with petal construction guides.
+     */
+    drawFlowerPetals() {
+        this.setupStroke(true);
+        const { count } = this.getSettings();
+        const flowers = Math.min(Math.ceil(count / 3), 3);
+        const margin = 100;
+
+        for (let i = 0; i < flowers; i++) {
+            const cx = margin + Math.random() * (this.width - margin * 2);
+            const cy = margin + Math.random() * (this.height - margin * 2);
+            const petalCount = 5 + Math.floor(Math.random() * 4);
+            const petalLen = 40 + Math.random() * 30;
+            const petalW = petalLen * 0.35;
+            const centerR = 10 + Math.random() * 8;
+
+            // Center circle
+            this.ctx.beginPath();
+            this.ctx.arc(cx, cy, centerR, 0, Math.PI * 2);
+            this.ctx.stroke();
+            this.drawPoint(cx, cy);
+
+            // Petals
+            for (let p = 0; p < petalCount; p++) {
+                const angle = (p / petalCount) * Math.PI * 2;
+                const tipX = cx + Math.cos(angle) * petalLen;
+                const tipY = cy + Math.sin(angle) * petalLen;
+
+                // Petal shape (two quadratic curves)
+                const perpAngle = angle + Math.PI / 2;
+                const cp1x = cx + Math.cos(angle) * petalLen * 0.5 + Math.cos(perpAngle) * petalW;
+                const cp1y = cy + Math.sin(angle) * petalLen * 0.5 + Math.sin(perpAngle) * petalW;
+                const cp2x = cx + Math.cos(angle) * petalLen * 0.5 - Math.cos(perpAngle) * petalW;
+                const cp2y = cy + Math.sin(angle) * petalLen * 0.5 - Math.sin(perpAngle) * petalW;
+
+                // Petal outline
+                this.ctx.beginPath();
+                this.ctx.moveTo(cx + Math.cos(angle) * centerR, cy + Math.sin(angle) * centerR);
+                this.ctx.quadraticCurveTo(cp1x, cp1y, tipX, tipY);
+                this.ctx.stroke();
+                this.ctx.beginPath();
+                this.ctx.moveTo(cx + Math.cos(angle) * centerR, cy + Math.sin(angle) * centerR);
+                this.ctx.quadraticCurveTo(cp2x, cp2y, tipX, tipY);
+                this.ctx.stroke();
+
+                // Petal center vein (dashed)
+                this.ctx.beginPath();
+                this.ctx.setLineDash([2, 3]);
+                this.ctx.moveTo(cx + Math.cos(angle) * centerR, cy + Math.sin(angle) * centerR);
+                this.ctx.lineTo(tipX, tipY);
+                this.ctx.stroke();
+                this.ctx.setLineDash([]);
+
+                this.drawPoint(tipX, tipY);
+            }
+        }
+    }
+
+    /**
+     * Exercise 29: Mushroom Forms
+     * Draws mushroom cap + stem construction guides.
+     */
+    drawMushroomForms() {
+        this.setupStroke(true);
+        const { count } = this.getSettings();
+        const mushrooms = Math.min(Math.ceil(count / 3), 3);
+        const margin = 100;
+
+        for (let i = 0; i < mushrooms; i++) {
+            const cx = margin + Math.random() * (this.width - margin * 2);
+            const cy = margin + Math.random() * (this.height - margin * 2);
+            const capW = 40 + Math.random() * 35;
+            const capH = capW * (0.4 + Math.random() * 0.3);
+            const stemH = capW * (0.8 + Math.random() * 0.6);
+            const stemW = capW * 0.2;
+
+            // Stem
+            this.ctx.beginPath();
+            this.ctx.moveTo(cx - stemW, cy);
+            this.ctx.lineTo(cx - stemW * 0.7, cy + stemH);
+            this.ctx.lineTo(cx + stemW * 0.7, cy + stemH);
+            this.ctx.lineTo(cx + stemW, cy);
+            this.ctx.stroke();
+
+            // Cap (dome)
+            this.ctx.beginPath();
+            this.ctx.ellipse(cx, cy, capW, capH, 0, Math.PI, 0);
+            this.ctx.stroke();
+
+            // Cap underside (ellipse)
+            this.ctx.beginPath();
+            this.ctx.ellipse(cx, cy, capW, capH * 0.3, 0, 0, Math.PI * 2);
+            this.ctx.setLineDash([2, 3]);
+            this.ctx.stroke();
+            this.ctx.setLineDash([]);
+
+            // Gills radiating from center
+            const gills = 5 + Math.floor(Math.random() * 4);
+            for (let g = 0; g < gills; g++) {
+                const angle = Math.PI + (g / (gills - 1)) * Math.PI;
+                this.ctx.beginPath();
+                this.ctx.setLineDash([2, 3]);
+                this.ctx.moveTo(cx, cy);
+                this.ctx.lineTo(cx + Math.cos(angle) * capW * 0.9, cy + Math.sin(angle) * capH * 0.2);
+                this.ctx.stroke();
+                this.ctx.setLineDash([]);
+            }
+
+            // Key points
+            this.drawPoint(cx, cy - capH);          // Cap top
+            this.drawPoint(cx, cy);                   // Cap center
+            this.drawPoint(cx, cy + stemH);          // Stem base
+        }
+    }
+
+    // ─── Insects & Arachnids (Lesson 4) ────────────────────────
+
+    /**
+     * Exercise 30: Beetle Body
+     * Draws 3-part insect body (head, thorax, abdomen) with leg guides.
+     */
+    drawBeetleBody() {
+        this.setupStroke(true);
+        const { count } = this.getSettings();
+        const beetles = Math.min(Math.ceil(count / 4), 3);
+        const margin = 100;
+
+        for (let i = 0; i < beetles; i++) {
+            const cx = margin + Math.random() * (this.width - margin * 2);
+            const cy = margin + Math.random() * (this.height - margin * 2);
+            const s = 25 + Math.random() * 15;
+            const angle = (Math.random() - 0.5) * 0.6;
+
+            this.ctx.save();
+            this.ctx.translate(cx, cy);
+            this.ctx.rotate(angle);
+
+            // Abdomen (largest segment)
+            this.ctx.beginPath();
+            this.ctx.ellipse(0, s * 1.8, s * 0.9, s * 1.2, 0, 0, Math.PI * 2);
+            this.ctx.stroke();
+
+            // Abdomen center line
+            this.ctx.beginPath();
+            this.ctx.setLineDash([2, 3]);
+            this.ctx.moveTo(0, s * 0.7);
+            this.ctx.lineTo(0, s * 3);
+            this.ctx.stroke();
+            this.ctx.setLineDash([]);
+
+            // Thorax (middle segment)
+            this.ctx.beginPath();
+            this.ctx.ellipse(0, s * 0.3, s * 0.65, s * 0.5, 0, 0, Math.PI * 2);
+            this.ctx.stroke();
+
+            // Head
+            this.ctx.beginPath();
+            this.ctx.ellipse(0, -s * 0.7, s * 0.45, s * 0.4, 0, 0, Math.PI * 2);
+            this.ctx.stroke();
+
+            // Eyes
+            this.drawPoint(-s * 0.25, -s * 0.85);
+            this.drawPoint(s * 0.25, -s * 0.85);
+
+            // Antennae
+            this.ctx.beginPath();
+            this.ctx.moveTo(-s * 0.3, -s * 1);
+            this.ctx.quadraticCurveTo(-s * 0.8, -s * 1.8, -s * 1.2, -s * 2);
+            this.ctx.stroke();
+            this.ctx.beginPath();
+            this.ctx.moveTo(s * 0.3, -s * 1);
+            this.ctx.quadraticCurveTo(s * 0.8, -s * 1.8, s * 1.2, -s * 2);
+            this.ctx.stroke();
+
+            // 6 Legs (3 pairs from thorax)
+            for (let l = 0; l < 3; l++) {
+                const ly = s * 0.1 + l * s * 0.25;
+                const legLen = s * (1 + l * 0.2);
+                // Left leg
+                this.ctx.beginPath();
+                this.ctx.moveTo(-s * 0.6, ly);
+                this.ctx.lineTo(-s * 0.8, ly + s * 0.3);
+                this.ctx.lineTo(-legLen, ly + s * 0.6);
+                this.ctx.stroke();
+                this.drawPoint(-s * 0.8, ly + s * 0.3);
+                // Right leg
+                this.ctx.beginPath();
+                this.ctx.moveTo(s * 0.6, ly);
+                this.ctx.lineTo(s * 0.8, ly + s * 0.3);
+                this.ctx.lineTo(legLen, ly + s * 0.6);
+                this.ctx.stroke();
+                this.drawPoint(s * 0.8, ly + s * 0.3);
+            }
+
+            // Body segment points
+            this.drawPoint(0, -s * 0.7);   // Head center
+            this.drawPoint(0, s * 0.3);    // Thorax center
+            this.drawPoint(0, s * 1.8);    // Abdomen center
+
+            this.ctx.restore();
+        }
+    }
+
+    /**
+     * Exercise 31: Butterfly Wings
+     * Draws butterfly body with symmetric wing construction guides.
+     */
+    drawButterflyWings() {
+        this.setupStroke(true);
+        const { count } = this.getSettings();
+        const butterflies = Math.min(Math.ceil(count / 3), 3);
+        const margin = 100;
+
+        for (let i = 0; i < butterflies; i++) {
+            const cx = margin + Math.random() * (this.width - margin * 2);
+            const cy = margin + Math.random() * (this.height - margin * 2);
+            const s = 30 + Math.random() * 20;
+            const wingW = s * (1.5 + Math.random() * 0.5);
+            const wingH = s * (1.2 + Math.random() * 0.4);
+
+            // Body (thin elongated ellipse)
+            this.ctx.beginPath();
+            this.ctx.ellipse(cx, cy, s * 0.1, s * 0.7, 0, 0, Math.PI * 2);
+            this.ctx.stroke();
+
+            // Head
+            this.ctx.beginPath();
+            this.ctx.arc(cx, cy - s * 0.8, s * 0.12, 0, Math.PI * 2);
+            this.ctx.stroke();
+            this.drawPoint(cx, cy - s * 0.8);
+
+            // Antennae
+            this.ctx.beginPath();
+            this.ctx.moveTo(cx - s * 0.05, cy - s * 0.9);
+            this.ctx.quadraticCurveTo(cx - s * 0.4, cy - s * 1.5, cx - s * 0.5, cy - s * 1.6);
+            this.ctx.stroke();
+            this.ctx.beginPath();
+            this.ctx.moveTo(cx + s * 0.05, cy - s * 0.9);
+            this.ctx.quadraticCurveTo(cx + s * 0.4, cy - s * 1.5, cx + s * 0.5, cy - s * 1.6);
+            this.ctx.stroke();
+
+            // Upper wings (left)
+            this.ctx.beginPath();
+            this.ctx.moveTo(cx, cy - s * 0.4);
+            this.ctx.quadraticCurveTo(cx - wingW * 0.8, cy - wingH * 0.6, cx - wingW, cy - s * 0.1);
+            this.ctx.quadraticCurveTo(cx - wingW * 0.6, cy + s * 0.2, cx, cy + s * 0.1);
+            this.ctx.stroke();
+
+            // Upper wings (right)
+            this.ctx.beginPath();
+            this.ctx.moveTo(cx, cy - s * 0.4);
+            this.ctx.quadraticCurveTo(cx + wingW * 0.8, cy - wingH * 0.6, cx + wingW, cy - s * 0.1);
+            this.ctx.quadraticCurveTo(cx + wingW * 0.6, cy + s * 0.2, cx, cy + s * 0.1);
+            this.ctx.stroke();
+
+            // Lower wings (left)
+            this.ctx.beginPath();
+            this.ctx.moveTo(cx, cy + s * 0.1);
+            this.ctx.quadraticCurveTo(cx - wingW * 0.5, cy + s * 0.3, cx - wingW * 0.7, cy + wingH * 0.5);
+            this.ctx.quadraticCurveTo(cx - wingW * 0.3, cy + wingH * 0.4, cx, cy + s * 0.6);
+            this.ctx.stroke();
+
+            // Lower wings (right)
+            this.ctx.beginPath();
+            this.ctx.moveTo(cx, cy + s * 0.1);
+            this.ctx.quadraticCurveTo(cx + wingW * 0.5, cy + s * 0.3, cx + wingW * 0.7, cy + wingH * 0.5);
+            this.ctx.quadraticCurveTo(cx + wingW * 0.3, cy + wingH * 0.4, cx, cy + s * 0.6);
+            this.ctx.stroke();
+
+            // Wing vein construction lines (dashed)
+            this.ctx.setLineDash([2, 3]);
+            // Left upper wing veins
+            this.ctx.beginPath();
+            this.ctx.moveTo(cx, cy - s * 0.2);
+            this.ctx.lineTo(cx - wingW * 0.7, cy - s * 0.2);
+            this.ctx.stroke();
+            this.ctx.beginPath();
+            this.ctx.moveTo(cx, cy - s * 0.1);
+            this.ctx.lineTo(cx - wingW * 0.5, cy - wingH * 0.3);
+            this.ctx.stroke();
+            // Right upper wing veins
+            this.ctx.beginPath();
+            this.ctx.moveTo(cx, cy - s * 0.2);
+            this.ctx.lineTo(cx + wingW * 0.7, cy - s * 0.2);
+            this.ctx.stroke();
+            this.ctx.beginPath();
+            this.ctx.moveTo(cx, cy - s * 0.1);
+            this.ctx.lineTo(cx + wingW * 0.5, cy - wingH * 0.3);
+            this.ctx.stroke();
+            this.ctx.setLineDash([]);
+
+            // Wing attachment points
+            this.drawPoint(cx, cy - s * 0.4);
+            this.drawPoint(cx, cy + s * 0.1);
+            this.drawPoint(cx - wingW, cy - s * 0.1);
+            this.drawPoint(cx + wingW, cy - s * 0.1);
+        }
+    }
+
+    /**
+     * Exercise 32: Spider Framework
+     * Draws spider with cephalothorax, abdomen and 8 leg construction guides.
+     */
+    drawSpiderFramework() {
+        this.setupStroke(true);
+        const { count } = this.getSettings();
+        const spiders = Math.min(Math.ceil(count / 4), 3);
+        const margin = 120;
+
+        for (let i = 0; i < spiders; i++) {
+            const cx = margin + Math.random() * (this.width - margin * 2);
+            const cy = margin + Math.random() * (this.height - margin * 2);
+            const s = 20 + Math.random() * 12;
+            const legReach = s * (2 + Math.random());
+
+            // Cephalothorax
+            this.ctx.beginPath();
+            this.ctx.ellipse(cx, cy - s * 0.8, s * 0.7, s * 0.55, 0, 0, Math.PI * 2);
+            this.ctx.stroke();
+
+            // Abdomen (larger)
+            this.ctx.beginPath();
+            this.ctx.ellipse(cx, cy + s * 0.8, s, s * 0.9, 0, 0, Math.PI * 2);
+            this.ctx.stroke();
+
+            // Connection between segments
+            this.ctx.beginPath();
+            this.ctx.setLineDash([2, 3]);
+            this.ctx.moveTo(cx, cy - s * 0.3);
+            this.ctx.lineTo(cx, cy + s * 0.05);
+            this.ctx.stroke();
+            this.ctx.setLineDash([]);
+
+            // Pedipalps (small front appendages)
+            this.ctx.beginPath();
+            this.ctx.moveTo(cx - s * 0.3, cy - s * 1.2);
+            this.ctx.lineTo(cx - s * 0.5, cy - s * 1.5);
+            this.ctx.stroke();
+            this.ctx.beginPath();
+            this.ctx.moveTo(cx + s * 0.3, cy - s * 1.2);
+            this.ctx.lineTo(cx + s * 0.5, cy - s * 1.5);
+            this.ctx.stroke();
+
+            // 8 Legs (4 pairs)
+            for (let l = 0; l < 4; l++) {
+                const baseY = cy - s * 0.8 + l * s * 0.35;
+                const spread = s * (0.5 + l * 0.15);
+                const legAngle = -0.3 + l * 0.2;
+
+                // Left leg - 3 segments (coxa+femur, patella+tibia, tarsus)
+                const lkx1 = cx - spread;
+                const lky1 = baseY - legReach * 0.3;
+                const lkx2 = cx - legReach * 0.6;
+                const lky2 = baseY + legReach * 0.15;
+                const lkx3 = cx - legReach * (0.5 + l * 0.12);
+                const lky3 = baseY + legReach * 0.5;
+
+                this.ctx.beginPath();
+                this.ctx.moveTo(cx - s * 0.6, baseY);
+                this.ctx.lineTo(lkx1, lky1);
+                this.ctx.lineTo(lkx2, lky2);
+                this.ctx.lineTo(lkx3, lky3);
+                this.ctx.stroke();
+                this.drawPoint(lkx1, lky1);
+                this.drawPoint(lkx2, lky2);
+                this.drawPoint(lkx3, lky3);
+
+                // Right leg
+                const rkx1 = cx + spread;
+                const rky1 = baseY - legReach * 0.3;
+                const rkx2 = cx + legReach * 0.6;
+                const rky2 = baseY + legReach * 0.15;
+                const rkx3 = cx + legReach * (0.5 + l * 0.12);
+                const rky3 = baseY + legReach * 0.5;
+
+                this.ctx.beginPath();
+                this.ctx.moveTo(cx + s * 0.6, baseY);
+                this.ctx.lineTo(rkx1, rky1);
+                this.ctx.lineTo(rkx2, rky2);
+                this.ctx.lineTo(rkx3, rky3);
+                this.ctx.stroke();
+                this.drawPoint(rkx1, rky1);
+                this.drawPoint(rkx2, rky2);
+                this.drawPoint(rkx3, rky3);
+            }
+
+            // Eyes (8 eyes in typical spider arrangement - simplified to 4 pairs)
+            this.drawPoint(cx - s * 0.2, cy - s * 1.2);
+            this.drawPoint(cx + s * 0.2, cy - s * 1.2);
+            this.drawPoint(cx - s * 0.35, cy - s * 1.05);
+            this.drawPoint(cx + s * 0.35, cy - s * 1.05);
+
+            // Body center points
+            this.drawPoint(cx, cy - s * 0.8);  // Cephalothorax center
+            this.drawPoint(cx, cy + s * 0.8);  // Abdomen center
+        }
+    }
 }

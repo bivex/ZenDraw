@@ -48,7 +48,16 @@ document.addEventListener('DOMContentLoaded', () => {
         hand: document.getElementById('type-hand'),
         figure: document.getElementById('type-figure'),
         skull: document.getElementById('type-skull'),
-        torso: document.getElementById('type-torso')
+        torso: document.getElementById('type-torso'),
+        // Plants & Nature
+        stem: document.getElementById('type-stem'),
+        leaf: document.getElementById('type-leaf'),
+        flower: document.getElementById('type-flower'),
+        mushroom: document.getElementById('type-mushroom'),
+        // Insects & Arachnids
+        beetle: document.getElementById('type-beetle'),
+        butterfly: document.getElementById('type-butterfly'),
+        spider: document.getElementById('type-spider')
     };
 
     // Zoom State
@@ -100,6 +109,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (types.figure.checked) generator.drawFigureProportions();
         if (types.skull.checked) generator.drawSkullConstruction();
         if (types.torso.checked) generator.drawTorsoStructure();
+
+        if (types.stem.checked) generator.drawStemFlow();
+        if (types.leaf.checked) generator.drawLeafConstruction();
+        if (types.flower.checked) generator.drawFlowerPetals();
+        if (types.mushroom.checked) generator.drawMushroomForms();
+
+        if (types.beetle.checked) generator.drawBeetleBody();
+        if (types.butterfly.checked) generator.drawButterflyWings();
+        if (types.spider.checked) generator.drawSpiderFramework();
     }
 
     // Event Listeners
